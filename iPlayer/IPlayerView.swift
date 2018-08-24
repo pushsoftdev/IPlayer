@@ -47,9 +47,15 @@ public class IPlayerView: UIView {
   
   private var videoMode: AVLayerVideoGravity = .resizeAspect
   
-  private var isControlsShowing = true {
+  private var isControlsShowing = false {
     willSet {
       updateControlsVisibility(shouldShow: !isControlsShowing)
+    }
+    
+    didSet {
+      if isControlsShowing {
+        initiateTimerAutoHider()
+      }
     }
   }
   
@@ -66,6 +72,10 @@ public class IPlayerView: UIView {
   private var bottomViewXMarginLandscape: CGFloat = 10.0
   private var bottomViewBottomMarginPortrait: CGFloat = 0.0
   private var bottomViewBottomMarginLandscape: CGFloat = -10.0
+  
+  private var timerControlsAutoHider: Timer?
+  
+  private let controlsAutoHiderDuration: TimeInterval = 4.0
   
   public override init(frame: CGRect) {
     super.init(frame: frame)
@@ -137,6 +147,20 @@ public class IPlayerView: UIView {
     configureDoubleTapRecognizer()
     
     updateForOrientation(orientation: UIDevice.current.orientation)
+    
+    initiateTimerAutoHider()
+  }
+  
+  private func initiateTimerAutoHider() {
+    timerControlsAutoHider = Timer.scheduledTimer(timeInterval: controlsAutoHiderDuration, target: self, selector: #selector(timerAutoHideControlsHandler), userInfo: nil, repeats: false)
+  }
+  
+  private func invalidateAutoHideTimer() {
+    if timerControlsAutoHider != nil {
+      timerControlsAutoHider?.invalidate()
+      timerControlsAutoHider = nil
+    }
+    
   }
   
   private func configureTapRecognizer() {
@@ -148,6 +172,10 @@ public class IPlayerView: UIView {
     tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(doubleTapHandler))
     tapRecognizer.numberOfTapsRequired = 2
     addGestureRecognizer(tapRecognizer)
+  }
+  
+  @objc func timerAutoHideControlsHandler() {
+    isControlsShowing = !isControlsShowing
   }
   
   @objc func tapHandler() {
@@ -202,6 +230,7 @@ public class IPlayerView: UIView {
   
   public func destroy() {
     iPlayer.reset()
+    invalidateAutoHideTimer()
   }
   
   private func configureSlider() {
@@ -332,11 +361,15 @@ public class IPlayerView: UIView {
   @objc func sliderBeginTracking() {
     sliderDuration.setThumbImage(sliderThumb, for: .normal)
     iPlayer.pause()
+    
+    invalidateAutoHideTimer()
   }
   
   @objc func sliderEndTracking() {
     sliderDuration.setThumbImage(UIImage(), for: .normal)
     iPlayer.seekTo(time: sliderDuration.value)
+    
+    initiateTimerAutoHider()
   }
   
   /// Creates the remaining duration of the video.
