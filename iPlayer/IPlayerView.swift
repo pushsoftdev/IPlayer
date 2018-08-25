@@ -147,11 +147,11 @@ public class IPlayerView: UIView {
     configureDoubleTapRecognizer()
     
     updateForOrientation(orientation: UIDevice.current.orientation)
-    
-    initiateTimerAutoHider()
   }
   
   private func initiateTimerAutoHider() {
+    invalidateAutoHideTimer()
+    
     timerControlsAutoHider = Timer.scheduledTimer(timeInterval: controlsAutoHiderDuration, target: self, selector: #selector(timerAutoHideControlsHandler), userInfo: nil, repeats: false)
   }
   
@@ -211,6 +211,9 @@ public class IPlayerView: UIView {
   }
   
   public func loadVideo(with url: String) {
+    initiateTimerAutoHider()
+    isControlsShowing = true
+   
     iPlayer.prepare(with: url)
   }
   
