@@ -21,7 +21,7 @@
 		1F5FD758213001CF0026FA45 /* IPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPlayer.swift; sourceTree = "<group>"; };
 		1F5FD759213001CF0026FA45 /* IPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPlayerView.swift; sourceTree = "<group>"; };
 		1F5FD75C2130026F0026FA45 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		1F5FD7C32130546B0026FA45 /* iPlayer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iPlayer.podspec; sourceTree = "<group>"; };
+		1F5FD7C32130546B0026FA45 /* iPlayer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iPlayer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
