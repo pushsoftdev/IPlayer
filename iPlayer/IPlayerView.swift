@@ -9,13 +9,12 @@ import UIKit
 import AVKit
 
 public protocol IPlayerViewDelegate: class {
+  func playerViewUpdatesControlsVisibility(shouldShow: Bool)
   func playerViewDidFinishPlaying()
   func playerView(playerView: IPlayerView, failedWith error: IPlayerError)
 }
 
 public class IPlayerView: UIView {
-  
-  open var topNavView: UIView?
   
   open var bottomView: UIView!
   
@@ -31,7 +30,7 @@ public class IPlayerView: UIView {
   
   open var iPlayer = IPlayer.shared
   
-  public weak var delegage: IPlayerViewDelegate?
+  public weak var delegate: IPlayerViewDelegate?
   
   override public static var layerClass: AnyClass {
     return AVPlayerLayer.self
@@ -197,17 +196,19 @@ public class IPlayerView: UIView {
     
     if !shouldShow {
       toAlpha = 0.0
+      hideSliderThumb()
     } else {
       toAlpha = 1.0
+      showSliderThumb()
     }
     
     UIView.animate(withDuration: 0.3) {
       self.bottomView.alpha = toAlpha
       self.buttonPlayPause.alpha = toAlpha
-      self.topNavView?.alpha = toAlpha
     }
     
     buttonPlayPause.isHidden = !shouldShow
+    delegate?.playerViewUpdatesControlsVisibility(shouldShow: shouldShow)
   }
   
   public func loadVideo(with url: String) {
@@ -294,7 +295,7 @@ public class IPlayerView: UIView {
   }
   
   private func layoutElapsedTime() {
-    let constraintElapsedTimeLeadingToSuperView = NSLayoutConstraint(item: labelElapsedTime, attribute: .leadingMargin, relatedBy: .equal, toItem: bottomView, attribute: .leadingMargin, multiplier: 1, constant: 7)
+    let constraintElapsedTimeLeadingToSuperView = NSLayoutConstraint(item: labelElapsedTime, attribute: .leadingMargin, relatedBy: .equal, toItem: bottomView, attribute: .leadingMargin, multiplier: 1, constant: 13)
     
     let constraintElapsedTimeCenterYInSuperView = NSLayoutConstraint(item: labelElapsedTime, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0)
     
@@ -305,7 +306,7 @@ public class IPlayerView: UIView {
   }
   
   private func layoutRemainingTime() {
-    let constraintRemainingTimeTrailingToSuperView = NSLayoutConstraint(item: labelRemainingTime, attribute: .trailingMargin, relatedBy: .equal, toItem: bottomView, attribute: .trailingMargin, multiplier: 1, constant: -5)
+    let constraintRemainingTimeTrailingToSuperView = NSLayoutConstraint(item: labelRemainingTime, attribute: .trailingMargin, relatedBy: .equal, toItem: bottomView, attribute: .trailingMargin, multiplier: 1, constant: -10)
     
     let constriantRemainingTimeCenterYToElapsedTime = NSLayoutConstraint(item: labelRemainingTime, attribute: .centerY, relatedBy: .equal, toItem: labelElapsedTime, attribute: .centerY, multiplier: 1, constant: 0)
     
@@ -316,9 +317,9 @@ public class IPlayerView: UIView {
   }
   
   private func layoutSlider() {
-    let constraintSliderTopToSuperView = NSLayoutConstraint(item: sliderDuration, attribute: .top, relatedBy: .equal, toItem: bottomView, attribute: .top, multiplier: 1, constant: 15)
+    let constraintSliderTopToSuperView = NSLayoutConstraint(item: sliderDuration, attribute: .top, relatedBy: .equal, toItem: bottomView, attribute: .top, multiplier: 1, constant: 18)
     
-    let constraintSliderBottomToSuperView = NSLayoutConstraint(item: sliderDuration, attribute: .bottom, relatedBy: .equal, toItem: bottomView, attribute: .bottom, multiplier: 1, constant: -15)
+    let constraintSliderBottomToSuperView = NSLayoutConstraint(item: sliderDuration, attribute: .bottom, relatedBy: .equal, toItem: bottomView, attribute: .bottom, multiplier: 1, constant: -18)
     
     let constraintSliderLeadingToElapsedTime = NSLayoutConstraint(item: sliderDuration, attribute: .leading, relatedBy: .equal, toItem: labelElapsedTime, attribute: .trailing, multiplier: 1, constant: 7)
     
@@ -362,17 +363,25 @@ public class IPlayerView: UIView {
   }
   
   @objc func sliderBeginTracking() {
-    sliderDuration.setThumbImage(sliderThumb, for: .normal)
+    showSliderThumb()
     iPlayer.pause()
     
     invalidateAutoHideTimer()
   }
   
   @objc func sliderEndTracking() {
-    sliderDuration.setThumbImage(UIImage(), for: .normal)
+    hideSliderThumb()
     iPlayer.seekTo(time: sliderDuration.value)
     
     initiateTimerAutoHider()
+  }
+  
+  private func showSliderThumb() {
+    sliderDuration.setThumbImage(sliderThumb, for: .normal)
+  }
+  
+  private func hideSliderThumb() {
+    sliderDuration.setThumbImage(UIImage(), for: .normal)
   }
   
   /// Creates the remaining duration of the video.
@@ -410,7 +419,7 @@ extension IPlayerView: IPlayerDelegate {
   }
   
   public func player(failedWith error: IPlayerError) {
-    delegage?.playerView(playerView: self, failedWith: error)
+    delegate?.playerView(playerView: self, failedWith: error)
   }
   
   private func handlePlayer(state: IPlayerState) {
@@ -431,7 +440,7 @@ extension IPlayerView: IPlayerDelegate {
       updateControlsVisibility(shouldShow: true)
       sliderDuration.value = 1.0
       sliderDuration.setThumbImage(sliderThumb, for: .normal)
-      delegage?.playerViewDidFinishPlaying()
+      delegate?.playerViewDidFinishPlaying()
     default:
       break
     }
