@@ -95,11 +95,11 @@ public class IPlayerView: UIView {
         let image = UIImage(named: name, in: bundle, compatibleWith: nil)
         return image
       }else {
-        assertionFailure("Could not load the bundle")
+        return nil
       }
     }
     
-    return UIImage()
+    return nil
   }
   
   private func configureUI() {
@@ -219,7 +219,7 @@ public class IPlayerView: UIView {
   
   public func updateForOrientation(orientation: UIDeviceOrientation) {
     if orientation.isLandscape {
-      bottomView.layer.cornerRadius = 10
+      bottomView.layer.cornerRadius = 12
       constraintBottomViewBottomToSuperView.constant = bottomViewBottomMarginLandscape
       constraintBottomViewLeadingToSuperView.constant = bottomViewXMarginLandscape
       constraintBottomViewTrailingToSuperView.constant = -bottomViewXMarginLandscape
@@ -284,7 +284,7 @@ public class IPlayerView: UIView {
   }
   
   private func layoutBottomView() {
-     constraintBottomViewBottomToSuperView = NSLayoutConstraint(item: bottomView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0)
+     constraintBottomViewBottomToSuperView = NSLayoutConstraint(item: bottomView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottomMargin, multiplier: 1, constant: 0)
     
     constraintBottomViewLeadingToSuperView = NSLayoutConstraint(item: bottomView, attribute: .leadingMargin, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1, constant: bottomViewXMarginPortrait)
     
@@ -387,7 +387,6 @@ public class IPlayerView: UIView {
     let timeRemaningFormatted = String(format: "%02d:%02d:%02d", (lround(timeRemaining) / 3600), ((lround(timeRemaining) / 60) % 60), lround(timeRemaining) % 60)
     
     let elapsedPercentage = elapsedTime / videoDuration // 0 to 1
-    print("\(elapsedTime) totalDuration: \(videoDuration) Percent: \(elapsedPercentage)")
     
     labelElapsedTime.text = elapsedTimeFormatted
     labelRemainingTime.text = timeRemaningFormatted
@@ -408,10 +407,6 @@ extension IPlayerView: IPlayerDelegate {
     }
     
     handlePlayerTime(elapsedTime: watchTime, videoDuration: remainingTime)
-  }
-  
-  public func playerDidFinishPlaying() {
-    delegage?.playerViewDidFinishPlaying()
   }
   
   public func player(failedWith error: IPlayerError) {
@@ -436,6 +431,7 @@ extension IPlayerView: IPlayerDelegate {
       updateControlsVisibility(shouldShow: true)
       sliderDuration.value = 1.0
       sliderDuration.setThumbImage(sliderThumb, for: .normal)
+      delegage?.playerViewDidFinishPlaying()
     default:
       break
     }

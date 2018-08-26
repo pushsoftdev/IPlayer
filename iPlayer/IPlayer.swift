@@ -14,7 +14,6 @@ public protocol IPlayerDelegate: class {
   func player(updatedTo watchTime: Float64,
               and remainingTime: Float64)
   
-  func playerDidFinishPlaying()
   func player(failedWith error: IPlayerError)
 }
 
@@ -58,7 +57,7 @@ public class IPlayer: NSObject {
       guard playerItem != nil else { return }
       
       registerPlayerItemEventHandlers()
-      registerPlayerEventNotificationHandlers()
+      registerPlayerItemEventNotificationHandlers()
     }
   }
   
@@ -119,7 +118,7 @@ public class IPlayer: NSObject {
     playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.playbackBufferEmpty))
   }
   
-  private func registerPlayerEventNotificationHandlers() {
+  private func registerPlayerItemEventNotificationHandlers() {
     let notificationName = Notification.Name.AVPlayerItemDidPlayToEndTime
     NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying(notification:)), name: notificationName, object: playerItem)
   }
@@ -195,17 +194,12 @@ public class IPlayer: NSObject {
     if player == nil {
       player = AVPlayer(playerItem: playerItem)
       playerLayer?.player = player
-      playerLayer?.videoGravity = .resizeAspect
-      
-      registerPlayerItemEventHandlers()
+      playerLayer?.videoGravity = .resizeAspect      
     } else {
       player?.replaceCurrentItem(with: playerItem)
     }
     
     state = .preparing
-    
-    registerPlayerEventNotificationHandlers()
-    
     player?.play()
   }
   
@@ -283,6 +277,5 @@ public class IPlayer: NSObject {
   
   @objc func playerDidFinishPlaying(notification: Notification) {
     state = .end
-    delegate?.player(updatedTo: .end)
   }
 }
