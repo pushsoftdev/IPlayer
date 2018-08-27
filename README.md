@@ -46,7 +46,7 @@ let iPlayerView = IPlayerView()
 
 ### Method 2
 
-Also, you can directly add a UIView to your storyboard and set it's class as IPlayerView to skip the above step.
+Also, you can directly add a UIView to your storyboard and set it's class as IPlayerView.
 
 Your're almost done!
 
