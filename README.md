@@ -78,4 +78,6 @@ func playerViewDidFinishPlaying()
 
 func playerView(playerView: IPlayerView, failedWith error: IPlayerError)
 ```
+Sometimes, IPlayerView might request the parent to hide / show the controls with respect to the current video state. Like when the video is being played, the IPlayerView might ask the parent to hide the navigation bar and other controls to be hidden.
 
+To do that ``` func playerViewUpdatesControlsVisibility(shouldShow: Bool) ``` will be called.
