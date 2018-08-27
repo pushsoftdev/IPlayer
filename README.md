@@ -1,6 +1,6 @@
 # iPlayer
 
-iPlayer is simply wraps AVPlayer and has all the implementation required to play an video file just by passing a URL.
+iPlayer is simply wraps AVPlayer and has all the implementation required to play a video file just by passing an URL.
 
 ## Requirements
 
