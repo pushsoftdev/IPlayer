@@ -103,6 +103,7 @@ public class IPlayerView: UIView {
   
   private func configureUI() {
     bottomView = UIView()
+    bottomView.isUserInteractionEnabled = true
     bottomView.translatesAutoresizingMaskIntoConstraints = false
     bottomView.backgroundColor = UIColor(red: 0.0 / 255.0, green: 0.0 / 255.0, blue: 0.0 / 255.0, alpha: 0.7)
     bottomView.isHidden = true
@@ -212,10 +213,22 @@ public class IPlayerView: UIView {
   }
   
   public func loadVideo(with url: String) {
+    resetView()
+    
     initiateTimerAutoHider()
     isControlsShowing = true
    
     iPlayer.prepare(with: url)
+  }
+  
+  private func resetView() {
+    sliderDuration.value = 0.0
+    sliderDuration.setThumbImage(UIImage(), for: .normal)
+    
+    let emptyTime = "00:00:00"
+    labelElapsedTime.text = emptyTime
+    labelRemainingTime.text = emptyTime
+    buttonPlayPause.isHidden = true
   }
   
   public func updateForOrientation(orientation: UIDeviceOrientation) {
@@ -233,6 +246,8 @@ public class IPlayerView: UIView {
   }
   
   public func destroy() {
+    resetView()
+    
     iPlayer.reset()
     invalidateAutoHideTimer()
   }
@@ -364,8 +379,8 @@ public class IPlayerView: UIView {
   
   @objc func sliderBeginTracking() {
     showSliderThumb()
-    iPlayer.pause()
     
+    iPlayer.removePlayerObservers()
     invalidateAutoHideTimer()
   }
   

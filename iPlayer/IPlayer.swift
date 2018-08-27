@@ -71,6 +71,13 @@ public class IPlayer: NSObject {
     }
   }
   
+  private var isBuffering = false {
+    didSet {
+      let state = isBuffering ? .buffering : playerState()
+      delegate?.player(updatedTo: state)
+    }
+  }
+  
   private var playerLayer: AVPlayerLayer?
   
   private var playerItemContext = 0
@@ -89,7 +96,7 @@ public class IPlayer: NSObject {
     
   }
   
-  private func addPlayerObservers() {
+  public func addPlayerObservers() {
     timeObserver = player?.addPeriodicTimeObserver(forInterval: .init(value: 1, timescale: 1), queue: DispatchQueue.main, using: { [weak self] elapsedTime in
       guard let strongSelf = self else { return }
       
@@ -104,8 +111,10 @@ public class IPlayer: NSObject {
     })
   }
   
-  private func removePlayerObservers() {
+  public func removePlayerObservers() {
+    guard timeObserver != nil else { return }
     player?.removeTimeObserver(timeObserver!)
+    timeObserver = nil
   }
   
   private func registerPlayerItemEventHandlers() {
@@ -235,9 +244,13 @@ public class IPlayer: NSObject {
     if videoDuration.isFinite {
       delegate?.player(updatedTo: elapsedTime, and: videoDuration)
       
-      player.seek(to: CMTimeMakeWithSeconds(elapsedTime, 100)) { (completed) in
-        self.state = .playing
-        player.play()
+      isBuffering = true
+      
+      player.seek(to: CMTimeMakeWithSeconds(elapsedTime, 100)) { [weak self] (completed) in
+        guard let strongSelf = self else { return }
+        strongSelf.addPlayerObservers()
+        
+        strongSelf.isBuffering = false
       }
     }
   }
