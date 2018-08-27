@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "iPlayer"
-  s.version      = "1.0.5"
+  s.version      = "1.0.6"
   s.summary      = "Fully customisable AVPlayer Library"
 
   s.description  = 'A fully customisable AVPlayer Library. Just load the player in your UI by passing a video url. Its that simple!'
