@@ -35,6 +35,7 @@ After the installation, you need to import the iPlayer framework in your ViewCon
 ```
 import iPlayer
 ```
+### Method 1
 
 Create an object for the **IPlayerView** class and add it as subview in your root view.
 
@@ -42,6 +43,10 @@ Create an object for the **IPlayerView** class and add it as subview in your roo
 let iPlayerView = IPlayerView()
 <Your Root View>.addSubView(iPlayerView)
 ```
+
+### Method 2
+
+Also, you can directly add a UIView to your storyboard and set it's class as IPlayerView to skip the above step.
 
 Your're almost done!
 
