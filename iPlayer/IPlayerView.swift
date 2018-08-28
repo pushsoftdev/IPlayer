@@ -46,17 +46,7 @@ public class IPlayerView: UIView {
   
   private var videoMode: AVLayerVideoGravity = .resizeAspect
   
-  private var isControlsShowing = false {
-    willSet {
-      updateControlsVisibility(shouldShow: !isControlsShowing)
-    }
-    
-    didSet {
-      if isControlsShowing {
-        initiateTimerAutoHider()
-      }
-    }
-  }
+  private var isControlsShowing = true
   
   private var sliderThumb: UIImage {
     return imageWithName(name: "slider_thumb")!
@@ -152,6 +142,9 @@ public class IPlayerView: UIView {
   private func initiateTimerAutoHider() {
     invalidateAutoHideTimer()
     
+    let playerState = iPlayer.playerState()
+    guard playerState != .paused && playerState != .end  else { return }
+    
     timerControlsAutoHider = Timer.scheduledTimer(timeInterval: controlsAutoHiderDuration, target: self, selector: #selector(timerAutoHideControlsHandler), userInfo: nil, repeats: false)
   }
   
@@ -175,13 +168,16 @@ public class IPlayerView: UIView {
   }
   
   @objc func timerAutoHideControlsHandler() {
-    isControlsShowing = !isControlsShowing
+    updateControlsVisibility(shouldShow: false)
+    isControlsShowing = false
   }
   
   @objc func tapHandler() {
-    guard iPlayer.playerState() == .playing else { return }
+    let playerState = iPlayer.playerState()
+    guard playerState != .paused && playerState != .end  else { return }
     
     isControlsShowing = !isControlsShowing
+    updateControlsVisibility(shouldShow: isControlsShowing)
   }
   
   @objc func doubleTapHandler() {
@@ -212,6 +208,11 @@ public class IPlayerView: UIView {
     
     buttonPlayPause.isHidden = !shouldShow
     delegate?.playerViewUpdatesControlsVisibility(shouldShow: shouldShow)
+    
+    isControlsShowing = shouldShow
+    if shouldShow {
+      initiateTimerAutoHider()
+    }
   }
   
   public func loadVideo(with url: String) {
@@ -448,10 +449,12 @@ extension IPlayerView: IPlayerDelegate {
       loader.stopAnimating()
       buttonPlayPause.setImage(imageWithName(name: "media_play"), for: .normal)
       updateControlsVisibility(shouldShow: true)
+      invalidateAutoHideTimer()
     case .playing:
       buttonPlayPause.isHidden = false
       buttonPlayPause.setImage(imageWithName(name: "media_pause"), for: .normal)
       loader.stopAnimating()
+      initiateTimerAutoHider()
     case .end:
       buttonPlayPause.setImage(imageWithName(name: "media_play"), for: .normal)
       updateControlsVisibility(shouldShow: true)
