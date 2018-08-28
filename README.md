@@ -14,7 +14,6 @@ iPlayer is simply wraps AVPlayer and has all the implementation required to play
 
 ```
 $ gem install cocoapods
-
 ```
 To integrate iPlayer in your Xcode project, specify it in your **Podfile**
 
@@ -53,12 +52,12 @@ Your're almost done!
 To start playing the video, pass the video url to the IPlayerView object.
 
 ```
-playerView.loadVideo(with: "<Your Video URL>")
+iPlayerView.loadVideo(with: "<Your Video URL>")
 ```
 Since this is just going to be a subview in your ViewController, the controls in the IPlayerView has to be properly aligned when the device orientation changes. To handle that, instruct the IPlayerView to update it's constraints whenever your ViewController's orientation changes. To do that, add the following code.
 
 ```
-playerView.updateForOrientation(orientation: UIDevice.current.orientation)
+iPlayerView.updateForOrientation(orientation: UIDevice.current.orientation)
 ```
 
 ### Handling IPlayerView Events
@@ -76,8 +75,8 @@ func playerViewUpdatesControlsVisibility(shouldShow: Bool)
 
 func playerViewDidFinishPlaying()
 
-func playerView(playerView: IPlayerView, failedWith error: IPlayerError)
+func iPlayerView(iPlayerView: IPlayerView, failedWith error: IPlayerError)
 ```
 Sometimes, IPlayerView might request the parent to hide / show the controls with respect to the current video state. Like when the video is being played, the IPlayerView might ask the parent to hide the navigation bar and other controls to be hidden.
 
-To do that ``` func playerViewUpdatesControlsVisibility(shouldShow: Bool) ``` will be called.
+To do that, you will be delegated with the method``` func playerViewUpdatesControlsVisibility(shouldShow: Bool) ``` where you can perform the required show / hide operations.

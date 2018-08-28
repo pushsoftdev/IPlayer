@@ -179,6 +179,8 @@ public class IPlayerView: UIView {
   }
   
   @objc func tapHandler() {
+    guard iPlayer.playerState() == .playing else { return }
+    
     isControlsShowing = !isControlsShowing
   }
   

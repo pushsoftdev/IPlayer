@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F0626652135035D002B25B6 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1F0626632135035C002B25B6 /* README.md */; };
+		1F0626662135035D002B25B6 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1F0626642135035C002B25B6 /* LICENSE */; };
 		1F5FD752213001AF0026FA45 /* iPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F5FD750213001AF0026FA45 /* iPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F5FD75A213001CF0026FA45 /* IPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FD758213001CF0026FA45 /* IPlayer.swift */; };
 		1F5FD75B213001CF0026FA45 /* IPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5FD759213001CF0026FA45 /* IPlayerView.swift */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F0626632135035C002B25B6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1F0626642135035C002B25B6 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		1F5FD74D213001AF0026FA45 /* iPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = iPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F5FD750213001AF0026FA45 /* iPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iPlayer.h; sourceTree = "<group>"; };
 		1F5FD751213001AF0026FA45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -38,6 +42,8 @@
 		1F5FD743213001AF0026FA45 = {
 			isa = PBXGroup;
 			children = (
+				1F0626642135035C002B25B6 /* LICENSE */,
+				1F0626632135035C002B25B6 /* README.md */,
 				1F5FD7C32130546B0026FA45 /* iPlayer.podspec */,
 				1F5FD74F213001AF0026FA45 /* iPlayer */,
 				1F5FD74E213001AF0026FA45 /* Products */,
@@ -133,7 +139,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F0626652135035D002B25B6 /* README.md in Resources */,
 				1F5FD75D2130026F0026FA45 /* Images.xcassets in Resources */,
+				1F0626662135035D002B25B6 /* LICENSE in Resources */,
 				1F5FD7C42130546C0026FA45 /* iPlayer.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
