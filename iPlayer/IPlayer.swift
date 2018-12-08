@@ -43,9 +43,13 @@ public struct IPlayerError {
   }
 }
 
+public enum IPlayerEncryption {
+  case AES
+}
+
 public class IPlayer: NSObject {
   
-  open static let shared = IPlayer()
+  public static let shared = IPlayer()
   
   private var playerItem: AVPlayerItem? {
     willSet {
@@ -82,6 +86,12 @@ public class IPlayer: NSObject {
   
   private var playerItemContext = 0
   
+  public var encryptionHeader: Any? = nil
+  
+  public var typeOfEncryption: IPlayerEncryption?
+  
+  public var isEncryptionNeed = false
+  
   private var state: IPlayerState = .unknown {
     didSet {
       delegate?.player(updatedTo: state)
@@ -91,6 +101,7 @@ public class IPlayer: NSObject {
   private var timeObserver: Any?
   
   public weak var delegate: IPlayerDelegate?
+  
   
   private override init() {
     
@@ -141,9 +152,9 @@ public class IPlayer: NSObject {
     
     if context == &playerItemContext {
       if keyPath == #keyPath(AVPlayerItem.status) {
-        let status: AVPlayerItemStatus
+        let status: AVPlayerItem.Status
         if let statusNumber = change?[.newKey] as? NSNumber {
-          status = AVPlayerItemStatus(rawValue: statusNumber.intValue)!
+          status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
         } else {
           status = .unknown
         }
@@ -160,13 +171,13 @@ public class IPlayer: NSObject {
     }
   }
   
-  private func handlePlayerItemStatus(status: AVPlayerItemStatus) {
+  private func handlePlayerItemStatus(status: AVPlayerItem.Status) {
     switch status {
-    case AVPlayerItemStatus.unknown:
+    case AVPlayerItem.Status.unknown:
       state = .buffering
-    case AVPlayerItemStatus.readyToPlay:
+    case AVPlayerItem.Status.readyToPlay:
       state = .playing
-    case AVPlayerItemStatus.failed:
+    case AVPlayerItem.Status.failed:
       state = .error
       
       if let reason = playerItem?.error?.localizedDescription {
@@ -190,7 +201,7 @@ public class IPlayer: NSObject {
       return
     }
     
-    guard let assetPath = URL(string: url) else {
+    guard let stramURL = URL(string: url) else {
       //      viewDelegate?.player(failedWith: .invalidVideoURL)
       #if DEBUG
       print("No valid player URL found. Stop preparing...")
@@ -198,12 +209,22 @@ public class IPlayer: NSObject {
       return
     }
     
-    playerItem = AVPlayerItem(url: assetPath)
+    // If Encrypted Video
+    if isEncryptionNeed == true  {
+      
+      switch typeOfEncryption! {
+      case IPlayerEncryption.AES:
+        playerItem = makeAESEncryption(withParameter: encryptionHeader!, withURl: stramURL)
+      }
+    }
+    else {
+      playerItem = AVPlayerItem(url: stramURL)
+    }
     
     if player == nil {
       player = AVPlayer(playerItem: playerItem)
       playerLayer?.player = player
-      playerLayer?.videoGravity = .resizeAspect      
+      playerLayer?.videoGravity = .resizeAspect
     } else {
       player?.replaceCurrentItem(with: playerItem)
     }
@@ -291,4 +312,10 @@ public class IPlayer: NSObject {
   @objc func playerDidFinishPlaying(notification: Notification) {
     state = .end
   }
+  
+  private func makeAESEncryption(withParameter paramter: Any, withURl url: URL)-> AVPlayerItem {
+    let avAsset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": paramter])
+    return AVPlayerItem(asset: avAsset)
+  }
 }
+

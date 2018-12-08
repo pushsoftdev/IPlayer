@@ -215,12 +215,17 @@ public class IPlayerView: UIView {
     }
   }
   
+  public func makePlayerEncryption(withEncryptionType type: IPlayerEncryption, withParameters parameters: Any) {
+    iPlayer.isEncryptionNeed = true
+    iPlayer.encryptionHeader = parameters
+    iPlayer.typeOfEncryption = type
+  }
+  
   public func loadVideo(with url: String) {
     resetView()
-    
     initiateTimerAutoHider()
     isControlsShowing = true
-   
+    
     iPlayer.prepare(with: url)
   }
   
@@ -303,7 +308,7 @@ public class IPlayerView: UIView {
   }
   
   private func layoutBottomView() {
-     constraintBottomViewBottomToSuperView = NSLayoutConstraint(item: bottomView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottomMargin, multiplier: 1, constant: 0)
+    constraintBottomViewBottomToSuperView = NSLayoutConstraint(item: bottomView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottomMargin, multiplier: 1, constant: 0)
     
     constraintBottomViewLeadingToSuperView = NSLayoutConstraint(item: bottomView, attribute: .leadingMargin, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1, constant: bottomViewXMarginPortrait)
     
@@ -376,7 +381,7 @@ public class IPlayerView: UIView {
     let elapsedTime = videoDuration * Float64(sliderDuration.value)
     
     if videoDuration.isFinite {
-        handlePlayerTime(elapsedTime: elapsedTime, videoDuration: videoDuration)
+      handlePlayerTime(elapsedTime: elapsedTime, videoDuration: videoDuration)
     }
   }
   
@@ -466,3 +471,4 @@ extension IPlayerView: IPlayerDelegate {
     }
   }
 }
+
