@@ -46,7 +46,7 @@ public struct IPlayerError {
 
 public class IPlayer: NSObject {
     
-    open static let shared = IPlayer()
+    public static let shared = IPlayer()
     
     private var playerItem: AVPlayerItem? {
         willSet {
